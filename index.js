@@ -37,14 +37,21 @@ class Bot extends EventEmitter {
     })
   }
 
-  sendMessage (recipient, payload, cb) {
+  sendMessage (recipient, payload, notification_type, cb) {
+    let notificationType = 'REGULAR';
+    if (typoef(notification_type) === 'function') {
+      cb = notification_type;
+    } else if typeof(notification_type) === 'string'{
+      notificationType = notification_type;
+    }
     return request({
       method: 'POST',
       uri: 'https://graph.facebook.com/v2.6/me/messages',
       qs: this._getQs(),
       json: {
         recipient: { id: recipient },
-        message: payload
+        message: payload,
+        notification_type: notificationType,
       }
     })
     .then(body => {
